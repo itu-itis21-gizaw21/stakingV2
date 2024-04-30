@@ -57,7 +57,7 @@ window.addEventListener('load', async () => {
 
   if (event.target.id === "stake") {
     console.log("Hello delegate!")
-    const value = inputAmount.value * 1000000;
+    const value = inputAmount.value ;
   const offlineSigner = keplr.getOfflineSigner(chainId);
   const accounts = (await offlineSigner.getAccounts())[0];
   const address = accounts.address;
@@ -67,7 +67,7 @@ window.addEventListener('load', async () => {
    const msg = MsgDelegate.fromPartial({
     delegatorAddress: "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl", //01node
     validatorAddress: "cosmosvaloper1lrzxwu4dmy8030waevcpft7rpxjjz26cpzvumd",
-    amount: { denom: "uatom", amount: value },
+    amount: { denom: "atom", amount: value },
   }); 
   console.log("msg",msg)
 
@@ -83,7 +83,7 @@ window.addEventListener('load', async () => {
    const fee = {
     amount: [
       {
-        denom: "uatom",
+        denom: "atom",
         amount: value,
       },
     ],
