@@ -1,3 +1,24 @@
+import { cosmoshub} from "./chains/cosmoshub";
+import { celestia} from "./chains/celestia";
+import { agoric } from "./chains/agoric";
+import { irisnet } from "./chains/irisnet";
+import { cheqd } from "./chains/cheqd";
+import { kyve } from "./chains/kyve";
+import { ux } from "./chains/ux";
+import { assetmantle } from "./chains/assetmantle";
+import { desmos } from "./chains/desmos";
+import { emoney } from "./chains/emoney";
+import { crescent } from "./chains/crescent";
+import { neutron } from "./chains/neutron";
+import { stride } from "./chains/stride";
+import { oraichain } from "./chains/oraichain";
+import { fxcore } from "./chains/fxcore";
+import { canto } from "./chains/canto";
+import { shentu } from "./chains/shentu";
+import { composable } from "./chains/composable";
+import { bandchain } from "./chains/bandchain";
+//import { ki_chain } from "./chains/ki_chain";
+
 const chains = {
     "theta-testnet-001": {
         chainId: "theta-testnet-001",
@@ -45,149 +66,26 @@ const chains = {
         coinType: 118,
         
     },
-    "cosmoshub-4": {
-        chainId: "cosmoshub-4",
-        chainName: "Cosmos",
-        rpc: "https://cosmos-rpc.publicnode.com:443",
-        rest: "https://cosmos-rest.publicnode.com",
-        bip44: {
-        coinType: 118,
-        },
-        bech32Config: {
-        bech32PrefixAccAddr: "cosmos",
-        bech32PrefixAccPub: "cosmospub",
-        bech32PrefixValAddr: "cosmosvaloper",
-        bech32PrefixValPub: "cosmosvaloperpub",
-        bech32PrefixConsAddr: "cosmosvalcons",
-        bech32PrefixConsPub: "cosmosvalconspub",
-        },
-        currencies: [
-        {
-            coinDenom: "ATOM",
-            coinMinimalDenom: "uatom",
-            coinDecimals: 6,
-            coinGeckoId: "cosmos"
-        }
-        ],
-        feeCurrencies: [
-        {
-            coinDenom: "ATOM",
-            coinMinimalDenom: "uatom",
-            coinDecimals: 6,
-            coinGeckoId: "cosmos",
-            gasPriceStep: {
-            low: 0.01,
-            average: 0.02,
-            high: 0.1,
-            },
-            
-        }
-        ],
-        stakeCurrency: {
-        coinDenom: "ATOM",
-        coinMinimalDenom: "uatom",
-        coinDecimals: 6,
-        coinGeckoId: "cosmos",
-        },
-        coinType: 118,
-    },
-    
-    "celestia" :  {
-        chainId: "celestia",
-        chainName: "Celestia",
-        rpc: "https://celestia-rpc.publicnode.com:443",
-        rest: "https://celestia-rest.publicnode.com",
-        bip44: {
-            coinType: 118,
-        },
-        bech32Config: {
-            bech32PrefixAccAddr: "celestia",
-            bech32PrefixAccPub: "celestia" + "pub",
-            bech32PrefixValAddr: "celestia" + "valoper",
-            bech32PrefixValPub: "celestia" + "valoperpub",
-            bech32PrefixConsAddr: "celestia" + "valcons",
-            bech32PrefixConsPub: "celestia" + "valconspub",
-        },
-        currencies: [
-            {
-                coinDenom: "TIA",
-                coinMinimalDenom: "utia",
-                coinDecimals: 6,
-                coinGeckoId: "celestia"
-            },
-        ],
-        feeCurrencies: [
-            {
-                coinDenom: "TIA",
-                coinMinimalDenom: "utia",
-                coinDecimals: 6,
-                coinGeckoId: "celestia",
-                gasPriceStep: {
-                low: 0.01,
-                average: 0.02,
-                high: 0.1,
-            },
-            },
-        ],
-        stakeCurrency: {
-            
-            coinDenom: "TIA",
-            coinMinimalDenom: "utia",
-            coinDecimals: 6,
-            coinGeckoId: "celestia",
-    
-        },
-        coinType: 118,
-        
-    },
-    "osmosis-1" : {
-        chainId: "osmosis-1",
-        chainName: "Osmosis",
-        rpc: "https://osmosis-rpc.publicnode.com:443",
-        rest: "https://osmosis-rest.publicnode.com",
-        bip44: {
-        coinType: 118
-        },
-        bech32Config: {
-        bech32PrefixAccAddr: "osmosis",
-        bech32PrefixAccPub: "osmosispub",
-        bech32PrefixValAddr: "osmosisvaloper",
-        bech32PrefixValPub: "osmosisvaloperpub",
-        bech32PrefixConsAddr: "osmosisvalcons",
-        bech32PrefixConsPub: "osmosisvalconspub"
-        },
-        currencies: [
-        {
-            coinDenom: "OSMO",
-            coinMinimalDenom: "uosmo",
-            coinDecimals: 6,
-            coinGeckoId: "osmosis"
-        }
-        ],
-        feeCurrencies: [
-        {
-            coinDenom: "OSMO",
-            coinMinimalDenom: "uosmo",
-            coinDecimals: 6,
-            coinGeckoId: "osmosis",
-            gasPriceStep: {
-            "low": 0.01,
-            "average": 0.025,
-            "high": 0.03
-            }
-        }
-        ],
-        stakeCurrency: {
-        coinDenom: "OSMO",
-        coinMinimalDenom: "uosmo",
-        coinDecimals: 6,
-        coinGeckoId: "osmosis"
-        },
-        coinType: 118,
-    }
+
+    "cosmoshub": cosmoshub,
+    "celestia" :  celestia,
+    "agoric" : agoric,
+    "irisnet" : irisnet,
+    "cheqd" : cheqd,
+    "kyve" : kyve,
+    "ux" : ux,
+    "assetmantle" : assetmantle,
+    "desmos" : desmos,
+    "emoney" : emoney,
+    "crescent" : crescent,
+    "neutron" : neutron,
+    "stride" : stride,
+    "oraichain" : oraichain,
+    "fxcore" : fxcore,
+    "canto" : canto,
+    "shentu" : shentu,
+    "composable" : composable,
+    "bandchain" : bandchain,
     };
-    
-    //export default chains;
-    //defult export do
-    // export
+   
     export { chains };
