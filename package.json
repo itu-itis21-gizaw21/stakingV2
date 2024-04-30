@@ -1,0 +1,22 @@
+{
+  "name": "vite-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  },
+  "dependencies": {
+    "@cosmjs/proto-signing": "0.32.3",
+    "@cosmjs/stargate": "0.32.3",
+    "@cosmjs/tendermint-rpc": "0.32.3",
+    "@keplr-wallet/types": "^0.10.13",
+    "cosmjs-types": "^0.5.2",
+    "protoc": "^1.1.3"
+  }
+}
