@@ -57,7 +57,7 @@ window.addEventListener('load', async () => {
 
   if (event.target.id === "stake") {
     console.log("Hello delegate!")
-    const value = inputAmount.value * 1000000;
+    const value = inputAmount.value;
   const offlineSigner = keplr.getOfflineSigner(chainId);
   const accounts = (await offlineSigner.getAccounts())[0];
   const address = accounts.address;
