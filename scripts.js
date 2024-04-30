@@ -4,7 +4,7 @@ import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import {chains} from "./chainInfo.js";
 
 window.addEventListener('load', async () => {
-  
+
   const inputAmount = document.getElementById('amount');
   const cosmosAdd = document.getElementById('cosmosAdd');
   const cosmosBal = document.getElementById('cosmosBal');
@@ -57,7 +57,7 @@ window.addEventListener('load', async () => {
 
   if (event.target.id === "stake") {
     console.log("Hello delegate!")
-    const value = inputAmount.value;
+    const value = inputAmount.value * 1000000;
   const offlineSigner = keplr.getOfflineSigner(chainId);
   const accounts = (await offlineSigner.getAccounts())[0];
   const address = accounts.address;
