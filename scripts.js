@@ -118,22 +118,22 @@ window.addEventListener('load', async () => {
         console.log("changed")
         try {
           await keplr.experimentalSuggestChain(chains[chainName]);
-          console.log("sleep",chains[chainName].chainId)
           await keplr.enable(chains[chainName].chainId);
 
           const offlineSigner = keplr.getOfflineSigner(chains[chainName].chainId);
-         const accounts = (await offlineSigner.getAccounts())[0];
+          const accounts = (await offlineSigner.getAccounts())[0];
           const address = accounts.address;
-          const signingClient = await SigningStargateClient.connectWithSigner(
-          chains[chainName].rpc,
-          offlineSigner
-          ); 
 
+          const signingClient = await SigningStargateClient.connectWithSigner(
+                  chains[chainName].rpc,
+                  offlineSigner
+          );
+          const coinMinimalDen = chains[chainName].currencies[0].coinMinimalDenom;
           const myBalanc = (
-          await signingClient.getBalance(address, coinMinimalDenom)
+            await signingClient.getBalance(address, coinMinimalDen)
           ).amount;
 
-        console.log("chainId7",chains[chainName].chainId) 
+     
         setTextContent(walletAdd, "Address" +": "+ address.slice(0, 5) + "..." + (accounts.address).slice(-5));
         setTextContent(walletBal,"Balance: " +  myBalanc/1000000 + " " + chains[chainName].currencies[0].coinDenom);
         setTextContent(walletChain, "Chain: " + chains[chainName].chainName);
