@@ -129,13 +129,13 @@ window.addEventListener('load', async () => {
           offlineSigner
           ); 
 
-          const myBalance = (
+          const myBalanc = (
           await signingClient.getBalance(address, coinMinimalDenom)
           ).amount;
 
         console.log("chainId7",chains[chainName].chainId) 
         setTextContent(walletAdd, "Address" +": "+ address.slice(0, 5) + "..." + (accounts.address).slice(-5));
-        setTextContent(walletBal,"Balance: " +  myBalance/1000000 + " " + chains[chainName].currencies[0].coinDenom);
+        setTextContent(walletBal,"Balance: " +  myBalanc/1000000 + " " + chains[chainName].currencies[0].coinDenom);
         setTextContent(walletChain, "Chain: " + chains[chainName].chainName);
         setTextContent(walletToken, "Token: " + chains[chainName].currencies[0].coinDenom);
 
@@ -273,7 +273,7 @@ function closeModal() {
   console.log("codee", gasUsed.code) 
   if (gasUsed.code === 0) {
     alert("Transaction successful");
-  } else {
+  } else  {
     alert("Transaction failed");
   }}
   );
