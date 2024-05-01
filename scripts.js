@@ -134,9 +134,12 @@ window.addEventListener('load', async () => {
                   offlineSigner
           );
           const coinMinimalDen = chains[chainName].currencies[0].coinMinimalDenom;
+          console.log("coinMinimalDen",coinMinimalDen)
           const myBalanc = (
             await signingClient.getBalance(address, coinMinimalDen)
           ).amount;
+          console.log("myBalanc No")
+          console.log("myBalanc",myBalanc)
 
      
         setTextContent(walletAdd, "Address" +": "+ address.slice(0, 5) + "..." + (accounts.address).slice(-5));
@@ -258,15 +261,18 @@ function closeModal() {
     typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
     value: msg,
   }; 
+  const stakingdenom = chains[chainName].feeCurrencies[0].coinMinimalDenom;
+  console.log("stakingdenom",stakingdenom)
    const fee = {
     amount: [
       {
-        denom: chains[chainName].currencies[0].coinMinimalDenom,
+        denom: stakingdenom,
         amount: value,
       },
     ],
     gas: "980000", // 180k
   };
+  console.log("fee",fee)  
   console.log(msgAny)
   const gasUsed = await signingClient.signAndBroadcast(
       address,
