@@ -26,7 +26,8 @@ const cheqd = {
         "coinDenom": "CHEQ",
         "coinMinimalDenom": "ncheq",
         "coinDecimals": 9,
-        "coinGeckoId": "cheqd-network"
+        "coinGeckoId": "cheqd-network",
+        "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/cheqd-mainnet/chain.png"
       }
     ],
     "feeCurrencies": [

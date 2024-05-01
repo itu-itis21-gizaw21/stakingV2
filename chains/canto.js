@@ -33,7 +33,8 @@ const canto = {
         "coinDenom": "CANTO",
         "coinMinimalDenom": "acanto",
         "coinDecimals": 18,
-        "coinGeckoId": "canto"
+        "coinGeckoId": "canto",
+        "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/canto_7700/chain.png",
       }
     ],
     "feeCurrencies": [

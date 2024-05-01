@@ -25,7 +25,8 @@ const desmos = {
             "coinDenom": "DSM",
             "coinMinimalDenom": "udsm",
             "coinDecimals": 6,
-            "coinGeckoId": "desmos"
+            "coinGeckoId": "desmos",
+            "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/desmos-mainnet/chain.png",
         }
     ],
     "feeCurrencies": [

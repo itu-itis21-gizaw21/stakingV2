@@ -25,7 +25,8 @@ const bandchain = {
         "coinDenom": "BAND",
         "coinMinimalDenom": "uband",
         "coinDecimals": 6,
-        "coinGeckoId": "band-protocol"
+        "coinGeckoId": "band-protocol",
+        "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/laozi-mainnet/chain.png",
       }
     ],
     "feeCurrencies": [

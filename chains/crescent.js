@@ -33,7 +33,8 @@ const crescent = {
         "coinDenom": "CRE",
         "coinMinimalDenom": "ucre",
         "coinDecimals": 6,
-        "coinGeckoId": "crescent-network"
+        "coinGeckoId": "crescent-network",
+        "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/crescent/chain.png",
       },
       {
         "coinDenom": "bCRE",

@@ -19,9 +19,13 @@
             <button id="mainnet" class="button connectStyle">
                 Mainnet
             </button>
-            <button id="testnet" class="button connectStyle">
+       <!--      <button id="testnet" class="button connectStyle">
                 Testnet
-            </button>
+            </button> -->
+            <div class="tokenWrapper">
+                <img src="" id="tokenImg" width="60px" height="60px"/>
+                <span id="tokenName"></span>
+            </div>
         </div>
         <div class="mainStyle">
             <p id="walletchain">Chain</p>
@@ -39,6 +43,19 @@
             </button>
         </div>
     </div>
+
+
+    <!-- Modal -->
+    <div id="tokenModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Choose Token</h2>
+                <div class="token-list">
+                </div>
+        </div>
+    </div>
+    
+
     <script type="module" src="scripts.js"></script>
 </body>
 </html>
