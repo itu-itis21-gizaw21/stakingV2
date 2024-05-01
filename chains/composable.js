@@ -64,7 +64,8 @@ const composable = {
       }
     }
   ],
-  "features": []
+  "features": [],
+  "validator_address": "centaurivaloper1lrzxwu4dmy8030waevcpft7rpxjjz26c6mldw5",
 };
 
 export { composable };

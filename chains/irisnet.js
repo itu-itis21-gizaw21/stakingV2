@@ -52,7 +52,8 @@ const irisnet = {
         }
       }
     ],
-    "features": []
+    "features": [],
+    "validator_address":"iva1lrzxwu4dmy8030waevcpft7rpxjjz26cy9jhgg"
   };
 
 export { irisnet };

@@ -46,7 +46,8 @@ const celestia = {
       "coinMinimalDenom": "utia",
       "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/celestia/utia.png"
     },
-    "walletUrlForStaking": "https://wallet.keplr.app/chains/celestia"
+    "walletUrlForStaking": "https://wallet.keplr.app/chains/celestia",
+    "validator_address": "celestiavaloper1lrzxwu4dmy8030waevcpft7rpxjjz26csrtqm4"
   };
 
 export { celestia};

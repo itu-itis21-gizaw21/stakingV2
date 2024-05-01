@@ -42,7 +42,8 @@ const shentu = {
         "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/shentu-2.2/uctk.png"
       }
     ],
-    "features": []
+    "features": [],
+    "validator_address":"certikvaloper1lrzxwu4dmy8030waevcpft7rpxjjz26c52q7l0"
   };
 
 export { shentu};

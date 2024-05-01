@@ -232,7 +232,8 @@ const crescent = {
         }
       }
     ],
-    "features": []
+    "features": [],
+    "validator_address": "cre1lrzxwu4dmy8030waevcpft7rpxjjz26cq7tvzn"
   };
 
 export { crescent };

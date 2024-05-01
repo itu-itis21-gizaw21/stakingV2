@@ -47,7 +47,8 @@ const ux = {
         }
       }
     ],
-    "features": ["authz-msg-revoke-fixed"]
+    "features": ["authz-msg-revoke-fixed"],
+    "validator_address":"umeevaloper12h8fpmg5qs570rmlem27km5xu4l2gv0lapuels"
   };
 
 export { ux };

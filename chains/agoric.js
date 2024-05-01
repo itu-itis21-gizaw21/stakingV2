@@ -70,7 +70,8 @@ const agoric = {
       {
         "coinType": 118
       }
-    ]
+    ],
+    "validator_address":"agoricvaloper1k334nqagmmxajt32hdtxrpnsavz0njwa3mtcqc"
   };
 
 export { agoric };

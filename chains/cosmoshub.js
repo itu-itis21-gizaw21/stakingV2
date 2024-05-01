@@ -46,7 +46,8 @@ const cosmoshub = {
       "coinMinimalDenom": "uatom",
       "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/cosmoshub/uatom.png"
     },
-    "walletUrlForStaking": "https://wallet.keplr.app/chains/cosmos-hub"
+    "walletUrlForStaking": "https://wallet.keplr.app/chains/cosmos-hub",
+    "validator_address":"cosmosvaloper1lrzxwu4dmy8030waevcpft7rpxjjz26cpzvumd"
   }
 
 export { cosmoshub };

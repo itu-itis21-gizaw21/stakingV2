@@ -48,7 +48,8 @@ const bandchain = {
       "coinDecimals": 6,
       "coinGeckoId": "band-protocol"
     },
-    "features": []
+    "features": [],
+    "validator_address": "band1l8zzhhe3ltlkk7sd38rcw7u6g9d609t24auf82"
   };
 
 export { bandchain };

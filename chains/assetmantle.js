@@ -52,7 +52,8 @@ const assetmantle = {
     },
     "features": [],
     "walletUrl": "https://wallet.assetmantle.one",
-    "walletUrlForStaking": "https://wallet.assetmantle.one/stake"
+    "walletUrlForStaking": "https://wallet.assetmantle.one/stake",
+    "validator_address": "Mantlevaloper1lrzxwu4dmy8030waevcpft7rpxjjz26c6d8cnp"
   };
 
 export { assetmantle };

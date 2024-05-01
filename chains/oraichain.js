@@ -57,7 +57,8 @@ const oraichain = {
         }
       }
     ],
-    "features": ["cosmwasm"]
+    "features": ["cosmwasm"],
+    "validator_address": "oraivaloper1lrzxwu4dmy8030waevcpft7rpxjjz26c704ra2"
   }
 
 export { oraichain };

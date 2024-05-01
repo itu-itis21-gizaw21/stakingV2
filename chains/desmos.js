@@ -48,7 +48,8 @@ const desmos = {
         "coinDecimals": 6,
         "coinGeckoId": "desmos"
     },
-    "features": []
+    "features": [],
+    "validator_address": "desmosvaloper1y6j0ych2elrxsqmxg5z39svtdlnkcxql4wvclc"
 };
 
 export { desmos };

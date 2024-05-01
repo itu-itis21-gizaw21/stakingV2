@@ -233,11 +233,11 @@ function closeModal() {
   const accounts = (await offlineSigner.getAccounts())[0];
   const address = accounts.address;
 
-  console.log("Hello delegate!")
- 
+  console.log(chains[chainName].validator_address)
+    
    const msg = MsgDelegate.fromPartial({
     delegatorAddress: address, //01node
-    validatorAddress: "cosmosvaloper1lrzxwu4dmy8030waevcpft7rpxjjz26cpzvumd",
+    validatorAddress: chains[chainName].validator_address,
     amount: { denom: chains[chainName].currencies[0].coinMinimalDenom, amount: value },
   }); 
   console.log("msg",msg)

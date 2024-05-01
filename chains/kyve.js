@@ -46,7 +46,8 @@ const kyve = {
         }
       }
     ],
-    "features": []
+    "features": [],
+    "validator_address":"kyvevaloper1lrzxwu4dmy8030waevcpft7rpxjjz26cpg4ljc"
   };
 
 export { kyve };

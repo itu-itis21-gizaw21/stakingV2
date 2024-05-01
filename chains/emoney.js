@@ -127,7 +127,8 @@ const emoney = {
         }
       }
     ],
-    "features": []
+    "features": [],
+    "validator_address":"emoneyvaloper1lrzxwu4dmy8030waevcpft7rpxjjz26cv4yf7w"
   };
 
 export { emoney };
