@@ -18,6 +18,11 @@ https://github.com/chainapsis/keplr-chain-registry/blob/main/cosmos/mantle.json
 https://github.com/chainapsis/keplr-chain-registry/blob/main/cosmos/desmos-mainnet.json
 https://github.com/chainapsis/keplr-chain-registry/blob/main/cosmos/emoney.json
 https://github.com/chainapsis/keplr-chain-registry/blob/main/cosmos/crescent.json
+Testnet
+
+https://github.com/chainapsis/keplr-chain-registry/blob/main/cosmos/entrypoint-pubtest.json
+https://github.com/chainapsis/keplr-chain-registry/blob/main/cosmos/bbn-test.json
+
 
 
 Cosmoshub

@@ -19,12 +19,15 @@ const listToken =  [
   "shentu",
   "composable",
   "bandchain",
+  "testnetbabylon",
+  "testnetentrypoint",
   
  /*  "canto",
   "cheqd",
   "fxcore",
   "neutron",
   "stride" */
+
 
 ]
 
@@ -117,12 +120,14 @@ window.addEventListener('load', async () => {
 
         console.log("changed")
         try {
+
           await keplr.experimentalSuggestChain(chains[chainName]);
           await keplr.enable(chains[chainName].chainId);
 
           const offlineSigner = keplr.getOfflineSigner(chains[chainName].chainId);
           const accounts = (await offlineSigner.getAccounts())[0];
           const address = accounts.address;
+          console.log(address)
 
           const signingClient = await SigningStargateClient.connectWithSigner(
                   chains[chainName].rpc,
