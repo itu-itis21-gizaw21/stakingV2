@@ -8,10 +8,7 @@ const listToken =  [
   "cosmoshub",
   "celestia",
   "agoric",
-  "neutron",
-  "stride",
   "irisnet",
-  "cheqd",
   "kyve",
   "ux",
   "assetmantle",
@@ -19,11 +16,16 @@ const listToken =  [
   "emoney",
   "crescent",
   "oraichain",
-  "fxcore",
-  "canto",
   "shentu",
   "composable",
-  "bandchain"
+  "bandchain",
+  
+ /*  "canto",
+  "cheqd",
+  "fxcore",
+  "neutron",
+  "stride" */
+
 ]
 
 let chainName  = "cosmoshub";
