@@ -80,7 +80,6 @@ MongooseError: Model.find() no longer accepts a callback
  */
 
 const fetch = require('node-fetch');
-const { M } = require('vite/dist/node/types.d-aGj9QkWt');
 let chain_data = "";
 
 async function getChainRegistry() {
