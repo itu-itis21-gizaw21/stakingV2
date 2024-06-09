@@ -1,5 +1,5 @@
 const composable = {
-  "rpc": "https://composable-rpc.polkachu.com/",
+  "rpc": "https://composable-mainnet-rpc.autostake.com:443",
   "rest": "https://composable-api.lavenderfive.com:443",
   "nodeProvider": {
     "name": "Lavender.Five Nodes",
