@@ -48,7 +48,7 @@ ChainInfoSchema.statics.createChainInfo = function (data, callback) {
         chain_info: data.chain_info,
     });
 
-    newMember.save((err, member) => {
+    newChainInfo.save((err, member) => {
         if (err) {
             console.log("createChainInfo error", err.message);
             return callback('internal_error');

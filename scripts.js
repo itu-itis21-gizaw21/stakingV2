@@ -1,7 +1,20 @@
 import {SigningStargateClient} from "@cosmjs/stargate";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import { MsgGrant, } from "cosmjs-types/cosmos/authz/v1beta1/tx";
+import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz.js";
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 
+///
+
+import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx";
+
+///
+
+
+
+///
 import {chains} from "./chainInfo.js";
+import { Timestamp } from "cosmjs-types/google/protobuf/timestamp.js";
 
 
 const listToken =  [
@@ -32,7 +45,6 @@ const listToken =  [
 ]
 
 let chainName  = "cosmoshub";
-console.log(listToken)
 
 window.addEventListener('load', async () => {
   const keplr = window.keplr;
@@ -49,6 +61,7 @@ window.addEventListener('load', async () => {
 
   const connectButton = document.getElementById('connect');
   const stakeButton = document.getElementById('stake');
+  const restakeButton = document.getElementById('restake');
 
  
   console.log("chainName",chainName)
@@ -221,10 +234,6 @@ function closeModal() {
   setTextContent(walletChain, "Chain: " + chainRealName);
   setTextContent(walletToken, "Token: " + currency);
 
-      
-     
-
-  
     } catch (err) {
       if (err instanceof Error) {
         console.log(err.message);
@@ -233,12 +242,105 @@ function closeModal() {
       }
     }
   });
+
+  restakeButton.addEventListener("click", async () => {
+    console.log("Hello delegate!");
+      
+  const offlineSigner = keplr.getOfflineSigner(chains[chainName].chainId);
+  const accounts = (await offlineSigner.getAccounts())[0];
+  const address = accounts.address;
+  console.log("11111111111");
+  //const expNano = fromRfc3339WithNanoseconds
+  const exp = Timestamp.fromPartial({
+    seconds: 22717776676 ,
+    nanos: 0,
+  })
+  const MAP_STAKE_AUTHZ_TYPE = {
+    delegate: 1,
+    undelegate: 2,
+    redelegate: 3
+  };
+  const stakeAuthzType = MAP_STAKE_AUTHZ_TYPE.delegate;  
+  console.log(stakeAuthzType);
+  console.log(chains[chainName].validator_address);
+  const stakeAuthValue = StakeAuthorization.encode(
+      StakeAuthorization.fromPartial({
+          authorizationType: stakeAuthzType,
+          allowList: {
+            address: [chains[chainName].validator_address]
+          },
+          maxTokens : 
+            Coin.fromPartial({
+              denom: chains[chainName].currencies[0].coinMinimalDenom,
+              amount: "100000000",
+            }),  
+      })
+  ).finish();
+  console.log("1xxxxxxxxxx");
+  console.log(stakeAuthValue);
+  console.log("2xxxxxxxxxx");
+  const msg = MsgGrant.fromPartial({
+    granter: address,
+    grantee: "cosmos1mjq48r6435aewerpruwc8up3tz3rzan2ve7hp4",
+    grant: {
+      authorization: {
+        typeUrl: '/cosmos.staking.v1beta1.StakeAuthorization',
+          value: stakeAuthValue,
+      },
+      expiration: exp,
+    }
+  });
+  console.log("2222222222222");
+  console.log(msg);
+
+   const signingClient = await SigningStargateClient.connectWithSigner(
+  chains[chainName].rpc,
+  offlineSigner
+); 
+    const msgAny = {
+    typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+    value: msg,
+  };
+
+
+
+
+  const stakingdenom = chains[chainName].feeCurrencies[0].coinMinimalDenom;
+
+  const fee = {
+    amount: [
+      {
+        denom: stakingdenom,
+        amount: "1000",
+      },
+    ],
+    gas: "980000", // 180k
+  };
+  const gasUsed = await signingClient.signAndBroadcast(
+      address,
+      [msgAny],
+    fee,
+    memo
+  );
+
+  console.log("Gas used: ", gasUsed);
+  console.log("codee", gasUsed.code) 
+  if (gasUsed.code === 0) {
+    alert("Transaction successful");
+    console.log(`https://www.mintscan.io/cosmos/tx/${gasUsed.transactionHash}`);
+  } else  {
+    alert("Transaction failed");
+  }
+ 
+  console.log("Gas used: ", gasUsed);
+
+  });
   
   stakeButton.addEventListener("click", async () => {
     console.log("Hello delegate!")
     const value = inputAmount.value
     
-    ;
+    
   const offlineSigner = keplr.getOfflineSigner(chains[chainName].chainId);
   const accounts = (await offlineSigner.getAccounts())[0];
   const address = accounts.address;
@@ -248,7 +350,11 @@ function closeModal() {
    const msg = MsgDelegate.fromPartial({
     delegatorAddress: address, //01node
     validatorAddress: chains[chainName].validator_address,
-    amount: { denom: chains[chainName].currencies[0].coinMinimalDenom, amount: value },
+   // amount: { denom: chains[chainName].currencies[0].coinMinimalDenom, amount: value },
+   amount: Coin.fromPartial({
+    amount: String(value),
+    denom: chains[chainName].currencies[0].coinMinimalDenom
+  }),
   }); 
   console.log("msg",msg)
 
@@ -259,6 +365,7 @@ function closeModal() {
 
    const msgAny = {
     typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+    type: "cosmos-sdk/MsgDelegate",
     value: msg,
   }; 
   const stakingdenom = chains[chainName].feeCurrencies[0].coinMinimalDenom;
@@ -284,6 +391,7 @@ function closeModal() {
   console.log("codee", gasUsed.code) 
   if (gasUsed.code === 0) {
     alert("Transaction successful");
+    console.log(`https://www.mintscan.io/cosmos/tx/${gasUsed.transactionHash}`);
   } else  {
     alert("Transaction failed");
   }}
