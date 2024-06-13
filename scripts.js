@@ -1,4 +1,4 @@
-import {QueryClient, SigningStargateClient, setupDistributionExtension} from "@cosmjs/stargate";
+import {QueryClient, SigningStargateClient, setupDistributionExtension, setupStakingExtension} from "@cosmjs/stargate";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { MsgGrant, } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { StakeAuthorization, StakeAuthorization_Validators } from "cosmjs-types/cosmos/staking/v1beta1/authz.js";
@@ -26,15 +26,7 @@ function buildRestakeMessage(address, validatorAddress, amount, denom) {
   }]
 }
 
-function   buildExecMessage(botAddress, messages) {
-  return {
-    typeUrl: "/cosmos.authz.v1beta1.MsgExec",
-    value: {
-      grantee: botAddress,
-      msgs: messages
-    }
-  }
-};
+
 
 let mex = 
   buildRestakeMessage(
@@ -467,29 +459,7 @@ function closeModal() {
   autoStakeButton.addEventListener("click", async () => {
 
 
-    function buildRestakeMessage(address, validatorAddress, amount, denom) {
-      return [{
-        typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
-        value: MsgDelegate.encode(MsgDelegate.fromPartial({
-          delegatorAddress: address,
-          validatorAddress: validatorAddress,
-          amount: Coin.fromPartial({
-            amount: String(amount),
-            denom: denom,
-          }),
-        })).finish()
-      }]
-    }
-
-  
-
-    let mex = 
-      buildRestakeMessage(
-        "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl",
-        "cosmosvaloper106yp7zw35wftheyyv9f9pe69t8rteumjrx52jg",
-        100,
-        "uatom"
-      )
+    
 
 
 
@@ -555,12 +525,43 @@ function closeModal() {
       gas: "600000", // 180k
     };
 
-    const gasUsed = await signingClient.signAndBroadcast(
+    const tendermintClient = await Tendermint34Client.connect(chains[chainName].rpc,);
+    //const queryClient = QueryClient.withExtensions(tendermintClient, setupStakingExtension);
+    const queryClient = QueryClient.withExtensions(tendermintClient, setupDistributionExtension);
+    const rewardsResponse =  queryClient.distribution.delegationRewards(delegatorAddress, validatorAddress).
+    then(
+      (rewards) => {
+        console.log("111");
+        const total = Object.values(rewards).reduce((sum, item)  => {
+          console.log("item",item)
+          const reward = item.find(el => el.denom === "uatom");
+          if (reward) {
+            return sum + parseFloat(reward.amount);
+          }
+          return sum;
+        },0);
+        console.log("total",total);
+        return total;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+   // const rewardsResponse = await queryClient.distribution.delegationRewards(delegatorAddress, validatorAddress);
+  //  const rewards = rewardsResponse.rewards;
+
+  /*   rewards.forEach((reward) => {
+      const amount = parseFloat(reward.amount) / 1e6; // Assuming the amounts are in uatom (1e6 uatom = 1 ATOM)
+      console.log(`Denom: ${reward.denom}, Amount: ${amount}`);
+    }); */
+  
+    console.log(rewardsResponse); 
+
+    /* const gasUsed = await signingClient.signAndBroadcast(
       address,
       [msgAuthz],
       fee,
       memo
-    );
+    ); */
     
     console.log("Gas used: ", gasUsed);
     console.log("codee", gasUsed.code) 
@@ -574,21 +575,9 @@ function closeModal() {
     console.log("Gas used: ", gasUsed);
   
     
-    //const balance = await signingClient.getBalance(delegatorAddress, "stake");
     const balance = await signingClient.getBalance(address, chains[chainName].currencies[0].coinMinimalDenom);
     
-    /* const tendermintClient = await Tendermint34Client.connect(chains[chainName].rpc);
-    //const queryClient = QueryClient.withExtensions(tendermintClient, setupStakingExtension);
-    const queryClient = QueryClient.withExtensions(tendermintClient, setupDistributionExtension);
-    const rewardsResponse = await queryClient.distribution.delegationRewards(delegatorAddress, validatorAddress);
-    const rewards = rewardsResponse.rewards;
-
-    rewards.forEach((reward) => {
-      const amount = parseFloat(reward.amount) / 1e6; // Assuming the amounts are in uatom (1e6 uatom = 1 ATOM)
-      console.log(`Denom: ${reward.denom}, Amount: ${amount}`);
-    });
   
-    console.log(rewards); */
 
   })
 
