@@ -8,39 +8,11 @@ import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz.js
 ///
 
 import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx";
-import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
-
-///
-
-function buildRestakeMessage(address, validatorAddress, amount, denom) {
-  return [{
-    typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
-    value: MsgDelegate.encode(MsgDelegate.fromPartial({
-      delegatorAddress: address,
-      validatorAddress: validatorAddress,
-      amount: Coin.fromPartial({
-        amount: String(amount),
-        denom: denom,
-      }),
-    })).finish()
-  }]
-}
-
-
-
-let mex = 
-  buildRestakeMessage(
-    "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl",
-    "cosmosvaloper106yp7zw35wftheyyv9f9pe69t8rteumjrx52jg",
-    1000000,
-    "uatom"
-  )
 
 
 ///
 import {chains} from "./chainInfo.js";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import { Query } from "mongoose";
 
 
 const listToken =  [
@@ -369,7 +341,11 @@ function closeModal() {
     offlineSigner
   ); 
 
+  const balancec =  (
+    await signingClient.getBalance(address, coinMinimalDenom)
+    ).amount;
 
+  console.log("balancec",balancec)
   const stakingdenom = chains[chainName].feeCurrencies[0].coinMinimalDenom
   console.log(stakingdenom);
   const fee = {
@@ -398,7 +374,7 @@ function closeModal() {
             authorization: {
               typeUrl: "/cosmos.staking.v1beta1.StakeAuthorization",
               value: StakeAuthorization.encode(StakeAuthorization.fromPartial({
-                allowList: {address: [chains[chainName].validator_address]},
+                allowList: {address: [chains[chainName].validator_address, "cosmosvaloper1gpx52r9h3zeul45amvcy2pysgvcwddxrgx6cnv"]},
                 authorizationType: 1
               })).finish(),
               maxTokens : Coin.fromPartial({
@@ -415,7 +391,7 @@ function closeModal() {
           }
       }
     },
-     {
+  /*    {
       typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
       value: {
         granter: "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl",
@@ -433,7 +409,7 @@ function closeModal() {
           })
         }
       }
-    } 
+    }  */
   ] 
  
   const gasUsed = await signingClient.signAndBroadcast(
@@ -458,13 +434,24 @@ function closeModal() {
   /**************************************************** */
   autoStakeButton.addEventListener("click", async () => {
 
+  const delegatorAddressx = "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl"; 
+  const validatorAddressx = "cosmosvaloper1gpx52r9h3zeul45amvcy2pysgvcwddxrgx6cnv";
+  const rpcEndpointx = 'https://rpc.cosmos.directory/cosmoshub';
 
-    
+  const tendermintClient = await Tendermint34Client.connect(rpcEndpointx);
+  
+  const queryClient = QueryClient.withExtensions(tendermintClient, setupDistributionExtension);
 
+  const rewardsResponse = await queryClient.distribution.delegationRewards(delegatorAddressx, validatorAddressx);
 
-
-    console.log("Hello delegate!")
-    //const value = inputAmount.value
+  const rewards = rewardsResponse.rewards;
+  
+    let amountx;
+  const uatomRewards = rewards.filter(reward => reward.denom === "uatom");
+  uatomRewards.forEach(reward => {
+    amountx = parseFloat(reward.amount) / 10e17;
+    console.log(`Denom: ${reward.denom}, Amount: ${amountx}`);
+  });
 
     const offlineSigner = keplr.getOfflineSigner(chains[chainName].chainId);
     const accounts = (await offlineSigner.getAccounts())[0];
@@ -481,22 +468,19 @@ function closeModal() {
       
     })
     
-  
 
-  
-
-    const msgAny = {
+/*     const msgAny = {
       typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
       value: withdrawMsg,
-    };
+    }; */
 
     const msgAction = {
       typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
       value: MsgDelegate.encode(MsgDelegate.fromPartial({
         delegatorAddress: delegatorAddress,
-        validatorAddress: validatorAddress,
+        validatorAddress: validatorAddressx,
         amount: Coin.fromPartial({
-          amount: "1",
+          amount: Math.floor(amountx).toString(),
           denom: "uatom",
         }),
       })).finish()
@@ -525,43 +509,12 @@ function closeModal() {
       gas: "600000", // 180k
     };
 
-    const tendermintClient = await Tendermint34Client.connect(chains[chainName].rpc,);
-    //const queryClient = QueryClient.withExtensions(tendermintClient, setupStakingExtension);
-    const queryClient = QueryClient.withExtensions(tendermintClient, setupDistributionExtension);
-    const rewardsResponse =  queryClient.distribution.delegationRewards(delegatorAddress, validatorAddress).
-    then(
-      (rewards) => {
-        console.log("111");
-        const total = Object.values(rewards).reduce((sum, item)  => {
-          console.log("item",item)
-          const reward = item.find(el => el.denom === "uatom");
-          if (reward) {
-            return sum + parseFloat(reward.amount);
-          }
-          return sum;
-        },0);
-        console.log("total",total);
-        return total;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-   // const rewardsResponse = await queryClient.distribution.delegationRewards(delegatorAddress, validatorAddress);
-  //  const rewards = rewardsResponse.rewards;
-
-  /*   rewards.forEach((reward) => {
-      const amount = parseFloat(reward.amount) / 1e6; // Assuming the amounts are in uatom (1e6 uatom = 1 ATOM)
-      console.log(`Denom: ${reward.denom}, Amount: ${amount}`);
-    }); */
-  
-    console.log(rewardsResponse); 
-
-    /* const gasUsed = await signingClient.signAndBroadcast(
+     const gasUsed = await signingClient.signAndBroadcast(
       address,
       [msgAuthz],
       fee,
       memo
-    ); */
+    ); 
     
     console.log("Gas used: ", gasUsed);
     console.log("codee", gasUsed.code) 
@@ -571,14 +524,8 @@ function closeModal() {
     } else  {
       alert("Transaction failed");
     }
-   
+  
     console.log("Gas used: ", gasUsed);
-  
-    
-    const balance = await signingClient.getBalance(address, chains[chainName].currencies[0].coinMinimalDenom);
-    
-  
-
   })
 
 
