@@ -1,5 +1,5 @@
 const composable = {
-  "rpc": "https://composable-mainnet-rpc.autostake.com:443",
+  "rpc": "https://rpc.cosmos.directory/composable",
   "rest": "https://composable-api.lavenderfive.com:443",
   "nodeProvider": {
     "name": "Lavender.Five Nodes",
@@ -65,7 +65,7 @@ const composable = {
     }
   ],
   "features": [],
-  "validator_address": "centaurivaloper1lrzxwu4dmy8030waevcpft7rpxjjz26c6mldw5",
+  "validator_address": "picavaloper1lrzxwu4dmy8030waevcpft7rpxjjz26cln5uap",
 };
 
 export { composable };

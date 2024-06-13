@@ -1,20 +1,54 @@
-import {SigningStargateClient} from "@cosmjs/stargate";
+import {QueryClient, SigningStargateClient, setupDistributionExtension} from "@cosmjs/stargate";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { MsgGrant, } from "cosmjs-types/cosmos/authz/v1beta1/tx";
-import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz.js";
+import { StakeAuthorization, StakeAuthorization_Validators } from "cosmjs-types/cosmos/staking/v1beta1/authz.js";
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-
+import { Timestamp } from "cosmjs-types/google/protobuf/timestamp.js";
+import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz.js";
 ///
 
 import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 
 ///
 
+function buildRestakeMessage(address, validatorAddress, amount, denom) {
+  return [{
+    typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+    value: MsgDelegate.encode(MsgDelegate.fromPartial({
+      delegatorAddress: address,
+      validatorAddress: validatorAddress,
+      amount: Coin.fromPartial({
+        amount: String(amount),
+        denom: denom,
+      }),
+    })).finish()
+  }]
+}
+
+function   buildExecMessage(botAddress, messages) {
+  return {
+    typeUrl: "/cosmos.authz.v1beta1.MsgExec",
+    value: {
+      grantee: botAddress,
+      msgs: messages
+    }
+  }
+};
+
+let mex = 
+  buildRestakeMessage(
+    "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl",
+    "cosmosvaloper106yp7zw35wftheyyv9f9pe69t8rteumjrx52jg",
+    1000000,
+    "uatom"
+  )
 
 
 ///
 import {chains} from "./chainInfo.js";
-import { Timestamp } from "cosmjs-types/google/protobuf/timestamp.js";
+import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { Query } from "mongoose";
 
 
 const listToken =  [
@@ -44,7 +78,10 @@ const listToken =  [
 
 ]
 
+
+
 let chainName  = "cosmoshub";
+
 
 window.addEventListener('load', async () => {
   const keplr = window.keplr;
@@ -62,7 +99,7 @@ window.addEventListener('load', async () => {
   const connectButton = document.getElementById('connect');
   const stakeButton = document.getElementById('stake');
   const restakeButton = document.getElementById('restake');
-
+  const autoStakeButton = document.getElementById('autostake');
  
   console.log("chainName",chainName)
   const chainRealName = chains[chainName].chainName;
@@ -213,7 +250,8 @@ function closeModal() {
       return;
     }
 
-    try {
+    try { 
+
       await keplr.experimentalSuggestChain(chains[chainName]);
       await keplr.enable(chainId);
 
@@ -243,82 +281,172 @@ function closeModal() {
     }
   });
 
+  /***************************** */
+
   restakeButton.addEventListener("click", async () => {
     console.log("Hello delegate!");
       
-  const offlineSigner = keplr.getOfflineSigner(chains[chainName].chainId);
-  const accounts = (await offlineSigner.getAccounts())[0];
-  const address = accounts.address;
-  console.log("11111111111");
-  //const expNano = fromRfc3339WithNanoseconds
-  const exp = Timestamp.fromPartial({
-    seconds: 22717776676 ,
-    nanos: 0,
-  })
-  const MAP_STAKE_AUTHZ_TYPE = {
-    delegate: 1,
-    undelegate: 2,
-    redelegate: 3
-  };
-  const stakeAuthzType = MAP_STAKE_AUTHZ_TYPE.delegate;  
-  console.log(stakeAuthzType);
-  console.log(chains[chainName].validator_address);
-  const stakeAuthValue = StakeAuthorization.encode(
+    const offlineSigner = keplr.getOfflineSigner(chains[chainName].chainId);
+    const accounts = (await offlineSigner.getAccounts())[0];
+    const address = accounts.address;
+
+    
+    const exp = Timestamp.fromPartial({
+      seconds: 22717776676 ,
+      nanos: 0,
+    })
+    const MAP_STAKE_AUTHZ_TYPE = {
+      delegate: 1,
+      undelegate: 2,
+      redelegate: 3
+    };
+
+    const allow_list = StakeAuthorization_Validators.encode(
+      StakeAuthorization_Validators.fromPartial({
+        address: [chains[chainName].validator_address]
+      })
+    ).finish()
+
+    const deny_list = StakeAuthorization_Validators.encode(
+      StakeAuthorization_Validators.fromPartial({
+        address: []
+      })
+    )
+
+    const stakeAuthzType = MAP_STAKE_AUTHZ_TYPE.delegate;  
+
+    const stakeAuthValue = StakeAuthorization.encode(
       StakeAuthorization.fromPartial({
           authorizationType: stakeAuthzType,
-          allowList: {
-            address: [chains[chainName].validator_address]
-          },
+          allowList: StakeAuthorization_Validators.decode(allow_list),
           maxTokens : 
             Coin.fromPartial({
               denom: chains[chainName].currencies[0].coinMinimalDenom,
               amount: "100000000",
             }),  
       })
-  ).finish();
-  console.log("1xxxxxxxxxx");
-  console.log(stakeAuthValue);
-  console.log("2xxxxxxxxxx");
-  const msg = MsgGrant.fromPartial({
-    granter: address,
-    grantee: "cosmos1mjq48r6435aewerpruwc8up3tz3rzan2ve7hp4",
-    grant: {
-      authorization: {
-        typeUrl: '/cosmos.staking.v1beta1.StakeAuthorization',
-          value: stakeAuthValue,
+   ).finish();
+
+
+    const msg = MsgGrant.fromPartial({
+      grant: {
+        authorization: {
+          typeUrl: '/cosmos.staking.v1beta1.StakeAuthorization',
+            value: stakeAuthValue,
+        },
+        expiration: exp,
       },
-      expiration: exp,
-    }
-  });
-  console.log("2222222222222");
-  console.log(msg);
+      granter: address,
+      grantee: "cosmos1ytxzuwahjhssekxkk9sarlz05utvfev85j6n3z",
+ 
+    });
 
-   const signingClient = await SigningStargateClient.connectWithSigner(
-  chains[chainName].rpc,
-  offlineSigner
-); 
+    //best one
     const msgAny = {
-    typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
-    value: msg,
-  };
+      typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+      value: msg,
+    }
+/* 
+    const withdrawStakeAuthValue = GenericAuthorization.encode(
+      GenericAuthorization.fromPartial({
+        msg: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward'
+      })
+    ).finish();
+
+    const msg2 = MsgGrant.fromPartial({
+      granter: address,
+      garantee: "cosmos1ytxzuwahjhssekxkk9sarlz05utvfev85j6n3z",
+      grant: {
+        authorization: {
+          typeUrl: '/cosmos.authz.v1beta1.GenericAuthorization',
+          value: withdrawStakeAuthValue,
+        },
+        expiration: exp,
+
+      }
+    });
+
+    const msgAny2 = {
+      typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+      type: "cosmos-sdk/MsgExec",
+      value: msg2,
+    }
+ */
+   const signingClient = await SigningStargateClient.connectWithSigner(
+    chains[chainName].rpc,
+    offlineSigner
+  ); 
 
 
-
-
-  const stakingdenom = chains[chainName].feeCurrencies[0].coinMinimalDenom;
-
+  const stakingdenom = chains[chainName].feeCurrencies[0].coinMinimalDenom
+  console.log(stakingdenom);
   const fee = {
     amount: [
       {
         denom: stakingdenom,
-        amount: "1000",
+        amount: "100",
       },
     ],
-    gas: "980000", // 180k
+    gas: "200000", // 180k
   };
+
+  const dateNow = new Date();
+  const expiration = new Date(
+    dateNow.getFullYear() + 1,
+    dateNow.getMonth(),
+    dateNow.getDate()
+  )
+    const messages = [
+    {
+      typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+      value: {
+          granter: "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl",
+          grantee: "cosmos1ytxzuwahjhssekxkk9sarlz05utvfev85j6n3z",
+          grant: {
+            authorization: {
+              typeUrl: "/cosmos.staking.v1beta1.StakeAuthorization",
+              value: StakeAuthorization.encode(StakeAuthorization.fromPartial({
+                allowList: {address: [chains[chainName].validator_address]},
+                authorizationType: 1
+              })).finish(),
+              maxTokens : Coin.fromPartial({
+                denom: chains[chainName].currencies[0].coinDenom,
+                amount: "100000000",
+              })
+
+            },
+            expiration: Timestamp.fromPartial({
+              seconds: expiration.getTime() / 1000,
+              nanos: 0
+            }),
+           
+          }
+      }
+    },
+     {
+      typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+      value: {
+        granter: "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl",
+        grantee: "cosmos1ytxzuwahjhssekxkk9sarlz05utvfev85j6n3z",
+        grant: {
+          authorization: {
+            typeUrl: "/cosmos.authz.v1beta1.GenericAuthorization",
+            value: GenericAuthorization.encode(GenericAuthorization.fromPartial({
+              msg: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward'
+            })).finish(),
+          },
+          expiration: Timestamp.fromPartial({
+            seconds: expiration.getTime() / 1000,
+            nanos: 0
+          })
+        }
+      }
+    } 
+  ] 
+ 
   const gasUsed = await signingClient.signAndBroadcast(
       address,
-      [msgAny],
+      messages,
     fee,
     memo
   );
@@ -335,7 +463,152 @@ function closeModal() {
   console.log("Gas used: ", gasUsed);
 
   });
+  /**************************************************** */
+  autoStakeButton.addEventListener("click", async () => {
+
+
+    function buildRestakeMessage(address, validatorAddress, amount, denom) {
+      return [{
+        typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+        value: MsgDelegate.encode(MsgDelegate.fromPartial({
+          delegatorAddress: address,
+          validatorAddress: validatorAddress,
+          amount: Coin.fromPartial({
+            amount: String(amount),
+            denom: denom,
+          }),
+        })).finish()
+      }]
+    }
+
   
+
+    let mex = 
+      buildRestakeMessage(
+        "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl",
+        "cosmosvaloper106yp7zw35wftheyyv9f9pe69t8rteumjrx52jg",
+        100,
+        "uatom"
+      )
+
+
+
+    console.log("Hello delegate!")
+    //const value = inputAmount.value
+
+    const offlineSigner = keplr.getOfflineSigner(chains[chainName].chainId);
+    const accounts = (await offlineSigner.getAccounts())[0];
+    const address = accounts.address;
+
+    const signingClient = await SigningStargateClient.connectWithSigner(
+      chains[chainName].rpc,
+      offlineSigner
+    );
+
+    const delegatorAddress = "cosmos1nhzfugalfm29htfep7tx3y5fhm8jhks5cy48sl";
+    const validatorAddress = "cosmosvaloper1lrzxwu4dmy8030waevcpft7rpxjjz26cpzvumd";
+    const withdrawMsg = MsgExec.fromPartial({
+      
+    })
+    
+  
+
+  
+
+    const msgAny = {
+      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      value: withdrawMsg,
+    };
+
+    const msgAction = {
+      typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+      value: MsgDelegate.encode(MsgDelegate.fromPartial({
+        delegatorAddress: delegatorAddress,
+        validatorAddress: validatorAddress,
+        amount: Coin.fromPartial({
+          amount: "1",
+          denom: "uatom",
+        }),
+      })).finish()
+  };
+  console.log(msgAction)
+
+    const msgExecValue = MsgExec.fromPartial({
+      grantee : "cosmos1ytxzuwahjhssekxkk9sarlz05utvfev85j6n3z",
+      msgs: [msgAction]
+    })
+    
+
+    const msgAuthz = {
+      typeUrl: "/cosmos.authz.v1beta1.MsgExec",
+      value: msgExecValue
+    } 
+ 
+
+    const fee = {
+      amount: [
+        {
+          denom: "uatom",
+          amount: "100",
+        },
+      ],
+      gas: "600000", // 180k
+    };
+
+    const gasUsed = await signingClient.signAndBroadcast(
+      address,
+      [msgAuthz],
+      fee,
+      memo
+    );
+    
+    console.log("Gas used: ", gasUsed);
+    console.log("codee", gasUsed.code) 
+    if (gasUsed.code === 0) {
+      alert("Transaction successful");
+      console.log(`https://www.mintscan.io/cosmos/tx/${gasUsed.transactionHash}`);
+    } else  {
+      alert("Transaction failed");
+    }
+   
+    console.log("Gas used: ", gasUsed);
+  
+    
+    //const balance = await signingClient.getBalance(delegatorAddress, "stake");
+    const balance = await signingClient.getBalance(address, chains[chainName].currencies[0].coinMinimalDenom);
+    
+    /* const tendermintClient = await Tendermint34Client.connect(chains[chainName].rpc);
+    //const queryClient = QueryClient.withExtensions(tendermintClient, setupStakingExtension);
+    const queryClient = QueryClient.withExtensions(tendermintClient, setupDistributionExtension);
+    const rewardsResponse = await queryClient.distribution.delegationRewards(delegatorAddress, validatorAddress);
+    const rewards = rewardsResponse.rewards;
+
+    rewards.forEach((reward) => {
+      const amount = parseFloat(reward.amount) / 1e6; // Assuming the amounts are in uatom (1e6 uatom = 1 ATOM)
+      console.log(`Denom: ${reward.denom}, Amount: ${amount}`);
+    });
+  
+    console.log(rewards); */
+
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /**************************************************** */
   stakeButton.addEventListener("click", async () => {
     console.log("Hello delegate!")
     const value = inputAmount.value
